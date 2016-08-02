@@ -31,14 +31,42 @@ module FakeActiveRecord
       schema.keys
     end
 
+  class << self
+    def all
+      "SELECT * FROM articles"
+    end
 
+    def find(id)
+      raise ArgumentError.new("No id found") if !self.columns.include?(id)
+      "SELECT * FROM articles WHERE id = #{id}"
+    end
 
+    def first
+      "SELECT * FROM articles LIMIT 1"
+    end
 
+    def last
+      "SELECT * FROM articles ORDER BY id DESC LIMIT 1"
+    end
 
-    # YOUR CODE GOES HERE
+    def select(*args)
+      raise ArgumentError.new("#{self} does not have those columns") if (self.columns.keys & args).empty?
+      "SELECT #{args.join(', ')} FROM articles"
+    end
 
+    def count
+      "SELECT COUNT(*) num FROM articles"
+    end
 
-
+    def where(hash)
+      raise ArgumentError.new("#{self} does not have those columns") if (self.columns.keys & hash.keys).empty?
+      str = "SELECT * FROM articles WHERE "
+      hash.each do |key, value|
+        str += "#{key} = #{value} AND "
+      end
+      str[0..-5]
+    end
+  end
 
 
   end
