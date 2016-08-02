@@ -25,10 +25,11 @@ class Article
     end
 
     def where(hash)
-      str = "SELECT * FROM articles WHERE"
+      str = "SELECT * FROM articles WHERE "
       hash.each do |key, value|
-        str.concat("#{key} = #{value}")
+        str += "#{key} = #{value} AND "
       end
+      str[0..-5]
     end
 
   end
