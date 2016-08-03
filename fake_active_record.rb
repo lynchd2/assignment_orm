@@ -33,42 +33,51 @@ module FakeActiveRecord
 
   class << self
     def all
-      "SELECT * FROM articles"
+      DB.execute("SELECT * FROM posts")
     end
 
-    def find(id)
-      raise ArgumentError.new("No id found") if !self.columns.include?(id)
-      "SELECT * FROM articles WHERE id = #{id}"
+    def find(id, *args)
+      # raise ArgumentError.new("No id found") if !self.columns.include?(id)
+      DB.execute("SELECT * FROM posts WHERE id = #{id}")
     end
 
     def first
-      "SELECT * FROM articles LIMIT 1"
+      DB.execute("SELECT * FROM posts LIMIT 1")
     end
 
     def last
-      "SELECT * FROM articles ORDER BY id DESC LIMIT 1"
+      DB.execute("SELECT * FROM posts ORDER BY id DESC LIMIT 1")
     end
 
     def select(*args)
       raise ArgumentError.new("#{self} does not have those columns") if (self.columns.keys & args).empty?
-      "SELECT #{args.join(', ')} FROM articles"
+      DB.execute("SELECT #{args.join(', ')} FROM posts")
     end
 
     def count
-      "SELECT COUNT(*) num FROM articles"
+      DB.execute("SELECT COUNT(*) num FROM posts")
     end
 
     def where(hash)
       raise ArgumentError.new("#{self} does not have those columns") if (self.columns.keys & hash.keys).empty?
-      str = "SELECT * FROM articles WHERE "
+      str = "SELECT * FROM posts WHERE "
       hash.each do |key, value|
         str += "#{key} = #{value} AND "
       end
-      str[0..-5]
+      DB.execute(str[0..-5])
+    end
+
+    def create(hash)
+      puts "inputing values"
+      DB.execute("
+        INSERT INTO #{self.table_name}
+        (#{hash.keys.join(', ')})
+        VALUES (#{hash.values.join(', ')});")
     end
   end
+
+# hash.values.map(&:to_s)
 
 
   end
 end
-
